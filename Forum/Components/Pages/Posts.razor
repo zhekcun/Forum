@@ -4,17 +4,24 @@
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
 
-<h3>New post</h3>
-
-<input @bind-value="@text" />
-<button @onclick="AddPost">Click me</button>
-
-<h3>Posts</h3>
-
-@foreach (Post post in posts)
+@if (posts == null)
 {
-    <p>@post.Id</p>
-    <p>@post.Text</p>
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <h3>New post</h3>
+
+    <input @bind-value="@text" />
+    <button @onclick="AddPost">Click me</button>
+
+    <h3>Posts</h3>
+
+    @foreach (Post post in posts)
+    {
+        <p>@post.Id</p>
+        <p>@post.Text</p>
+    }
 }
 
 

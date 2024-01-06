@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Forum.Migrations
 {
-    [DbContext(typeof(Forum.AppContext.AppContext))]
+    [DbContext(typeof(Forum.AppContext.ApplicationContext))]
     [Migration("20231217130919_Initial")]
     partial class Initial
     {

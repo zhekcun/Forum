@@ -1,0 +1,49 @@
+﻿@page "/posts"
+@using Forum.AppContext
+@using Forum.Models
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+
+<h3>New post</h3>
+
+<input @bind-value="@text" />
+<button @onclick="AddPost">Click me</button>
+
+<h3>Posts</h3>
+
+@foreach (Post post in posts)
+{
+    <p>@post.Id</p>
+    <p>@post.Text</p>
+}
+
+
+@code {
+    private string text = "";
+    private List<Post> posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+
+    private async Task AddPost()
+    {
+        using (ApplicationContext db = new())
+        {
+            var post = db.Posts.Add(new Post { Text = text });
+            text = "";
+            posts.Add(post.Entity);
+            await db.SaveChangesAsync();
+        }
+    }
+
+    private async Task LoadPosts()
+    {
+        using (ApplicationContext db = new())
+        {
+            posts = await db.Posts.ToListAsync();
+        }
+    }
+}

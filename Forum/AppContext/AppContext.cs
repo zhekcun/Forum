@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Forum.AppContext
 {
-    public class AppContext: DbContext
+    public class ApplicationContext: DbContext
     {
-        public AppContext()
+        public ApplicationContext()
         {
             DbPath = System.IO.Path.Join(@"..\", "test.db");
         }

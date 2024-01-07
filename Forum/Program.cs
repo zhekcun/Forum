@@ -1,3 +1,4 @@
+using Forum.AppContext;
 using Forum.Components;
 
 var builder = WebApplication.CreateBuilder(args);

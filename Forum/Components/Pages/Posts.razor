@@ -39,10 +39,10 @@ else
     {
         using (ApplicationContext db = new())
         {
-            var post = db.Posts.Add(new Post { Text = text });
-            text = "";
-            posts.Add(post.Entity);
-            await db.SaveChangesAsync();
+            // var post = db.Posts.Add(new Post { Text = text });
+            // text = "";
+            // posts.Add(post.Entity);
+            // await db.SaveChangesAsync();
         }
     }
 

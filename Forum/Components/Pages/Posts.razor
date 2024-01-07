@@ -1,12 +1,12 @@
-﻿@page "/posts"
+﻿@page "/posts/{theme}"
 @using Forum.AppContext
 @using Forum.Models
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
 
-@if (posts == null)
+@if(currentTheme == null)
 {
-    <p><em>Loading...</em></p>
+    <h3>Theme not founded</h3>
 }
 else
 {
@@ -25,32 +25,37 @@ else
 }
 
 
+
+
 @code {
+    [Parameter]
+    public string Theme { get; set; } = "";
+
     private string text = "";
     private List<Post> posts;
+    private Theme? currentTheme;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadPosts();
-    }
+        using (ApplicationContext db = new())
+        {
+            currentTheme = await db.Themes.FirstOrDefaultAsync(x => x.Name == Theme);
+            if(currentTheme != null)
+            {
+                posts = await db.Posts.Where(x => x.Theme.Name == Theme).ToListAsync();
+            }
 
+        }
+    }
 
     private async Task AddPost()
     {
         using (ApplicationContext db = new())
         {
-            // var post = db.Posts.Add(new Post { Text = text });
-            // text = "";
-            // posts.Add(post.Entity);
-            // await db.SaveChangesAsync();
-        }
-    }
-
-    private async Task LoadPosts()
-    {
-        using (ApplicationContext db = new())
-        {
-            posts = await db.Posts.ToListAsync();
+            var post = db.Posts.Add(new Post { Text = text, Theme = currentTheme! });
+            text = "";
+            posts.Add(post.Entity);
+            await db.SaveChangesAsync();
         }
     }
 }

@@ -1,0 +1,31 @@
+﻿@page "/themes"
+@using Forum.AppContext
+@using Forum.Models
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+
+@if (themes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (Theme theme in themes)
+    {
+        <NavLink href="@($"posts/{theme.Name}")">@theme.Name</NavLink>
+        <br />
+    }
+}
+
+
+@code {
+    private List<Theme> themes;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (ApplicationContext db = new())
+        {
+            themes = await db.Themes.ToListAsync();
+        }
+    }
+}

@@ -54,12 +54,17 @@ namespace Forum.Migrations
             modelBuilder.Entity("Forum.Models.Post", b =>
                 {
                     b.HasOne("Forum.Models.Theme", "Theme")
-                        .WithMany()
+                        .WithMany("Posts")
                         .HasForeignKey("ThemeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Theme");
+                });
+
+            modelBuilder.Entity("Forum.Models.Theme", b =>
+                {
+                    b.Navigation("Posts");
                 });
 #pragma warning restore 612, 618
         }

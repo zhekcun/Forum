@@ -2,11 +2,12 @@
 @using Forum.AppContext
 @using Forum.Models
 @using Microsoft.EntityFrameworkCore
+@using Serilog
 @rendermode InteractiveServer
 
-@if(currentTheme == null)
+@if (!String.IsNullOrEmpty(errorText))
 {
-    <h3>Theme not founded</h3>
+    <h3>@errorText</h3>
 }
 else
 {
@@ -33,16 +34,20 @@ else
 
     private string text = "";
     private List<Post> posts;
-    private Theme? currentTheme;
+    private string errorText = "";
 
     protected override async Task OnInitializedAsync()
     {
         using (ApplicationContext db = new())
         {
-            currentTheme = await db.Themes.FirstOrDefaultAsync(x => x.Name == Theme);
-            if(currentTheme != null)
+            Theme? theme = await db.Themes.FirstOrDefaultAsync(x => x.Name == Theme);
+            if (theme != null)
             {
                 posts = await db.Posts.Where(x => x.Theme.Name == Theme).ToListAsync();
+            }
+            else
+            {
+                errorText = $"Theme {Theme} is not founded";
             }
 
         }
@@ -52,10 +57,15 @@ else
     {
         using (ApplicationContext db = new())
         {
-            var post = db.Posts.Add(new Post { Text = text, Theme = currentTheme! });
-            text = "";
-            posts.Add(post.Entity);
-            await db.SaveChangesAsync();
+            Theme? theme = await db.Themes.FirstOrDefaultAsync(x => x.Name == Theme);
+            if (theme != null)
+            {
+                var post = db.Posts.Add(new Post { Text = text, Theme = theme! });
+                text = "";
+                await db.SaveChangesAsync();
+                posts.Add(post.Entity);
+            }
+            
         }
     }
 }

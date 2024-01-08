@@ -1,10 +1,13 @@
 ﻿using Forum.Models;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Forum.AppContext
 {
     public class ApplicationContext: DbContext
     {
+        private static readonly ILoggerFactory MyLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddSerilog(); });
         public ApplicationContext()
         {
             DbPath = System.IO.Path.Join(@"..\", "test.db");
@@ -14,6 +17,6 @@ namespace Forum.AppContext
         public DbSet<Theme> Themes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
-        => options.UseSqlite($"Data Source={DbPath}");
+        => options.UseLoggerFactory(MyLoggerFactory).UseSqlite($"Data Source={DbPath}");
     }
 }

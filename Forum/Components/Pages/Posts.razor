@@ -21,7 +21,7 @@ else
     @foreach (Post post in posts)
     {
         <p>@post.Id</p>
-        <p>@post.Text</p>
+        <NavLink href="@($"post{post.Id}")">@post.Text</NavLink>        
     }
 }
 

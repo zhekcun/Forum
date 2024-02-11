@@ -1,0 +1,77 @@
+﻿@page "/post{idPost}"
+@using Forum.AppContext
+@using Forum.Models
+@using Microsoft.EntityFrameworkCore
+@using Serilog
+@rendermode InteractiveServer
+
+@if (!String.IsNullOrEmpty(errorText))
+{
+    <h3>@errorText</h3>
+}
+else
+{
+    <h3>Post</h3>
+    <p>@post.Id</p>
+    <p>@post.Text</p>
+    <h3>Add comment</h3>
+
+    <input @bind-value="@text" />
+    <button @onclick="AddComment">Click me</button>
+
+    <h3>Comments</h3>
+
+    @foreach (Comment comment in comments)
+    {
+        <p>@comment.Id</p>
+        <p>@comment.Text</p>
+    }
+}
+
+
+
+
+@code {
+    [Parameter]
+    public string idPost { get; set; } = "";
+
+    private string text = "";
+    private List<Comment> comments;
+    private string errorText = "";
+    private Post post;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (ApplicationContext db = new())
+        {
+            Post? post = await db.Posts.FirstOrDefaultAsync(x => x.Id.ToString() == idPost);
+            if (post != null)
+            {
+                this.post = post;
+                comments = await db.Comments.Where(x => x.Post == post).ToListAsync();
+            }
+            else
+            {
+                errorText = $"Post {idPost} is not founded";
+            }
+
+        }
+    }
+
+    private async Task AddComment()
+    {
+        using (ApplicationContext db = new())
+        {
+            Post? post = await db.Posts.FirstOrDefaultAsync(x => x.Id.ToString() == idPost);
+            if (post != null)
+            {
+                var comment = db.Comments.Add(new Comment { Text = text, Post = post });
+
+                text = "";
+                await db.SaveChangesAsync();
+                comments.Add(comment.Entity);
+            }
+            
+        }
+    }
+}
